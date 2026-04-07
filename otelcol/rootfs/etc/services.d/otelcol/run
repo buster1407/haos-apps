@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bashio
+# ==============================================================================
+# Start the OpenTelemetry service
+# s6-overlay docs: https://github.com/just-containers/s6-overlay
+# ==============================================================================
+
+# Add your code here
+
+# Declare variables
+declare endpoint
+
+## Get the OTLP endpoint from config
+endpoint=$(bashio::config 'otlp_endpoint')
+
+## Generate config with endpoint
+sed "s|\${OTLP_ENDPOINT}|${endpoint}|g" /etc/otelcol-contrib/config-template.yaml > /etc/otelcol-contrib/config.yaml
+
+bashio::log.info "Starting OpenTelemetry Exporter to endpoint: ${endpoint}"
+
+## Run your program
+exec /usr/bin/otelcol-contrib --config=/etc/otelcol-contrib/config.yaml

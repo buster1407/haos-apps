@@ -1,0 +1,15 @@
+# https://developers.home-assistant.io/docs/apps/configuration#app-configuration
+name: OpenTelemetry Exporter
+version: "1.0.0"
+slug: opentelemetry_exporter
+description: Export host metrics using OpenTelemetry Protocol (OTLP)
+init: false
+arch:
+  - amd64
+host_uts: true
+privileged:
+  - PERFMON
+options:
+  otlp_endpoint: ""
+schema:
+  otlp_endpoint: "str"
