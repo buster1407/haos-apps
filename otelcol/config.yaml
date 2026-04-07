@@ -6,6 +6,7 @@ description: Export host metrics using OpenTelemetry Protocol (OTLP)
 init: false
 arch:
   - amd64
+  - aarch64
 host_uts: true
 privileged:
   - PERFMON
