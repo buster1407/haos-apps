@@ -1,0 +1,3 @@
+# https://developers.home-assistant.io/docs/apps/repository#repository-configuration
+name: Home Assistant app repository
+url: "https://github.com/buster1407/haos-apps"
