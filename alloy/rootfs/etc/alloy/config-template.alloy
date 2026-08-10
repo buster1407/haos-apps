@@ -1,0 +1,48 @@
+// Configure the node_exporter integration to collect system metrics
+prometheus.exporter.unix "system_metrics" {
+  set_collectors = ["cpu", "filesystem", "meminfo", "loadavg", "netdev", "uname"]
+  rootfs_path = "/rootfs"
+
+  filesystem {
+    // Exclude filesystem types that aren't relevant for monitoring
+    fs_types_exclude     = "^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|tmpfs|fusectl|hugetlbfs|iso9660|mqueue|nfs|nfs4|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$"
+    // Exclude mount points that aren't relevant for monitoring
+    mount_points_exclude = "^/(dev|proc|sys|run|etc/hostname|etc/hosts|etc/resolv.conf|etc/config/.+|var/lib/docker/.+)($|/)"
+    // Timeout for filesystem operations
+    mount_timeout        = "5s"
+  }
+
+    netdev {
+    // Exclude virtual and container network interfaces from device metrics
+    device_exclude = "^(veth.*|cali.*|[a-f0-9]{15})$"
+  }
+}
+
+// This block relabels metrics coming from node_exporter to add standard labels
+discovery.relabel "system_metrics" {
+  targets = prometheus.exporter.unix.system_metrics.targets
+
+  rule {
+    target_label = "job"
+    replacement = "node"
+  }
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.scrape "scraper" {
+  targets    = discovery.relabel.system_metrics.output
+  forward_to = [ prometheus.remote_write.local.receiver ]
+
+  scrape_interval = "10s"
+}
+
+// Configure a prometheus.remote_write component to send metrics to a Prometheus server.
+prometheus.remote_write "local" {
+  endpoint {
+    url = "${PROMETHEUS_ENDPOINT}/api/v1/write"
+  }
+}

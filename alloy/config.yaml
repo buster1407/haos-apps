@@ -1,0 +1,16 @@
+# https://developers.home-assistant.io/docs/apps/configuration#app-configuration
+name: Grafana Alloy Exporter
+version: "1.0.0"
+slug: grafana_alloy_exporter
+description: Export host metrics using Grafana Alloy
+init: false
+arch:
+  - aarch64
+  - amd64
+host_uts: true
+privileged:
+  - PERFMON
+options:
+  prometheus_endpoint: ""
+schema:
+  prometheus_endpoint: "str"
