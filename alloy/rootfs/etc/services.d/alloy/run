@@ -18,4 +18,4 @@ sed "s|\${PROMETHEUS_ENDPOINT}|${endpoint}|g" /etc/alloy/config-template.alloy >
 bashio::log.info "Starting Grafana Alloy Exporter"
 
 ## Run your program
-exec /usr/bin/alloy run /etc/alloy/config.alloy --storage.path=/var/lib/alloy/data
+exec /usr/bin/alloy run /etc/alloy/config.alloy --storage.path=/var/lib/alloy/data --disable-reporting
